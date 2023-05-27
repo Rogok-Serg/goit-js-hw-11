@@ -53,7 +53,6 @@ onHideButton();
 function getHitsMarkup() {
   return onFetchData(searchQuery, page)
     .then((data) => {
-      console.log(data.hits.length)
       if (data.length === 0) {
         Notify.failure("Sorry, there are no images matching your search query. Please try again.")
         onHideButton()
