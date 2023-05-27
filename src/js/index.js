@@ -11,7 +11,6 @@ const refs = {
   gallery: document.querySelector('.gallery'),
   loadMore: document.querySelector('.load-more')
 }
-
 // const API_KEY = '36616176-e2fb394e56572b2a43cdc4409'
 // const API_URL = 'https://pixabay.com/api/'
 // const page = 1
@@ -44,7 +43,7 @@ function onRequestSubmit(event) {
     page = 1;
     refs.gallery.innerHTML = ''
      
-    getHitsMarkup()
+    fetchCards()
       .finally(() => form.reset());
     }
     console.log(formValue)  
@@ -60,21 +59,23 @@ function onRequestSubmit(event) {
 // };
 function fetchCards() {
   page += 1;
-  getHitsMarkup()
-    // .finally(() => formValue.reset());
-}
-onHideButton();
-function getHitsMarkup() {
   onShowButton() 
   onDisableButton()
+  return getHitsMarkup().then(() => onEnableButton());
+
+    // .finally(() => formValue.reset());
+}
+
+onHideButton();
+function getHitsMarkup() {
   return onFetchData(searchQuery, page)
     .then(data => {
       if (data.length === 0) {
         Notify.failure("Sorry, there are no images matching your search query. Please try again.")
       }
       onCreateMarkupCard(data)
+      
     })
-    .then (() => onEnableButton())
     .catch(error => Notify.failure("Sorry, there are no images matching your search query. Please try again."))  
 }
 
