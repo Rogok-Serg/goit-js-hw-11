@@ -70,13 +70,13 @@ function getHitsMarkup() {
   return onFetchData(searchQuery, page)
     .then(data => {
       if (data.length === 0) {
-        Notify.failure("Sorry, there are no images matching your search query. Please try again.")
+        Notify.failure("gfhgfhfghSorry, there are no images matching your search query. Please try again.")
+        onHideButton()
       }
       onCreateMarkupCard(data)
       
     })
-    .catch(error => Notify.failure("Sorry, there are no images matching your search query. Please try again."
-    ), onHideButton())  
+    .catch(error => Notify.failure("Білібірда Sorry, there are no images matching your search query. Please try again."))  
 }
 
 
