@@ -4,16 +4,13 @@ import axios from "axios";
 import SimpleLightbox from "simplelightbox";
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-// import { fetchData } from './fetchData'
 
 const refs = {
   form: document.getElementById('search-form'),
   gallery: document.querySelector('.gallery'),
   loadMore: document.querySelector('.load-more')
 }
-// const API_KEY = '36616176-e2fb394e56572b2a43cdc4409'
-// const API_URL = 'https://pixabay.com/api/'
-// const page = 1
+
 refs.form.addEventListener('submit', onRequestSubmit);
 refs.loadMore.addEventListener('click', fetchCards);
 
@@ -25,60 +22,53 @@ let searchQuery= ''
 async function onFetchData(value, page = 1) {
   const { data } = await axios
     .get(`${API_URL}?key=${API_KEY}&q=${value}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=40`)
-    // .then(({ data }) => {
-    // incrementPage();
-    return data.hits;
-  // })
-  // .catch(error => console.log(error));
+    return data;
 };
+
 function onRequestSubmit(event) {
   event.preventDefault()
   const form = event.currentTarget
   const formValue = form.elements.searchQuery.value.trim();
   if (formValue === '') {
     refs.gallery.innerHTML = ''
+    onHideButton()
     Notify.info("The input field is empty. Please enter a value to search for")
   } else { 
     searchQuery = formValue;
-    page = 1;
+    page = 0;
     refs.gallery.innerHTML = ''
-     
     fetchCards()
-      .finally(() => form.reset());
+    form.reset();
     }
-    console.log(formValue)  
-
-  // event.target.searchQuery.value
-  // event.currentTarget.elements.searchQuery.value
 }
-// function incrementPage() {
-//   page + 1
-// }
-// function resetPage() {
-//   page = 1
-// };
+
 function fetchCards() {
   page += 1;
   onShowButton() 
   onDisableButton()
   getHitsMarkup().then(() => onEnableButton());
-    // .finally(() => formValue.reset());
 }
 
 onHideButton();
 function getHitsMarkup() {
   return onFetchData(searchQuery, page)
-    .then(data => {
+    .then((data) => {
+      console.log(data.hits.length)
       if (data.length === 0) {
         Notify.failure("Sorry, there are no images matching your search query. Please try again.")
         onHideButton()
+      } else if (data.totalHits === 0) {
+        Notify.failure("Sorry, there are no images matching your search query. Please try again.")
+        onHideButton()
+      } else if (data.hits.length < 40) {
+        onHideButton()
+        Notify.info("We're sorry, but you've reached the end of search results.")
       }
-      onCreateMarkupCard(data)
-      
+      onCreateMarkupCard(data.hits)
+      Notify.info(`Hooray! We found ${data.totalHits} images.`)
     })
-    .catch(error => Notify.failure("Sorry, there are no images matching your search query. Please try again."))  
+    .catch(error => Notify.failure("Sorry, there are no images matching your search query. Please try again."));
 }
-
 
 function onHideButton() {
   refs.loadMore.classList.add("hidden")
@@ -100,37 +90,7 @@ function onEnableButton() {
   refs.loadMore.classList.remove("disabled")
 }
 
-// async function onFetchData(type) {
-//   const {data} = await axios
-//   .get(`${API_URL}?key=${API_KEY}&q=${type}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=40`)
-//     // .then(({ data }) => {
-//   incrementPage();
-//   console.log(data.hits);
-//       return data.hits;
-//   // })
-//   // .catch(error => console.log(error));
-// };
-
-
-// function incrementPage() {
-//   page + 1
-// }
-// function resetPage() {
-//   page = 1
-// }
-
-// function onFetchData(type) {
-//   return fetch(`${API_URL}?key=${API_KEY}&q=${type}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=40`)
-//     .then(response => {
-//       if (!response.ok) {
-//         throw new Error(response.statusText);
-//       }
-//       return (response.json());
-//     })
-// }
-
 function onCreateMarkupCard(data) {
-  // refs.gallery.innerHTML = '';
   refs.gallery.insertAdjacentHTML('beforeend', data.reduce((card, { webformatURL, largeImageURL, tags, likes, views, comments, downloads }) =>
     card + `<a class="gallery__link card-link"href="${largeImageURL}">
   <div class="photo-card  overlay-card">
@@ -154,11 +114,10 @@ function onCreateMarkupCard(data) {
     </p>
   </div>
 </div>
-</a>`, '')).refresh();
-}
+</a>`, ''));
 const lightbox = new SimpleLightbox('.gallery a', { 
-        /* options */ 
         captionsData:'alt',
         captionPosition: 'bottom',
         captionDelay: 250,
     });
+}

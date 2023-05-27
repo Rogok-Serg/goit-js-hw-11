@@ -26,7 +26,7 @@ export default class FetchData {
       //   throw new Error(hits.statusText);
       // }
     this.incrementPage();
-    console.log(data.hits);
+    console.log(data);
   })
   // .catch(error => console.log(error));
   };
