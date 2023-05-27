@@ -62,7 +62,6 @@ function fetchCards() {
   onShowButton() 
   onDisableButton()
   return getHitsMarkup().then(() => onEnableButton());
-
     // .finally(() => formValue.reset());
 }
 
@@ -76,7 +75,8 @@ function getHitsMarkup() {
       onCreateMarkupCard(data)
       
     })
-    .catch(error => Notify.failure("Sorry, there are no images matching your search query. Please try again."))  
+    .catch(error => Notify.failure("Sorry, there are no images matching your search query. Please try again."
+    ), onHideButton())  
 }
 
 
