@@ -69,14 +69,15 @@ onHideButton();
 function getHitsMarkup() {
   return onFetchData(searchQuery, page)
     .then(data => {
+      console.log(data.totalHits)
       if (data.length === 0) {
-        Notify.failure("gfhgfhfghSorry, there are no images matching your search query. Please try again.")
+        Notify.failure("Sorry, there are no images matching your search query. Please try again.")
         onHideButton()
       }
       onCreateMarkupCard(data)
       
     })
-    .catch(error => Notify.failure("Білібірда Sorry, there are no images matching your search query. Please try again."))  
+    .catch(error => Notify.failure("Sorry, there are no images matching your search query. Please try again."))  
 }
 
 
