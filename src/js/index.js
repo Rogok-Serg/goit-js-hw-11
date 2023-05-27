@@ -61,7 +61,7 @@ function fetchCards() {
   page += 1;
   onShowButton() 
   onDisableButton()
-  return getHitsMarkup().then(() => onEnableButton());
+  getHitsMarkup().then(() => onEnableButton());
     // .finally(() => formValue.reset());
 }
 
@@ -69,7 +69,6 @@ onHideButton();
 function getHitsMarkup() {
   return onFetchData(searchQuery, page)
     .then(data => {
-      console.log(data.totalHits)
       if (data.length === 0) {
         Notify.failure("Sorry, there are no images matching your search query. Please try again.")
         onHideButton()
@@ -155,11 +154,11 @@ function onCreateMarkupCard(data) {
     </p>
   </div>
 </div>
-</a>`, ''))
+</a>`, '')).refresh();
+}
 const lightbox = new SimpleLightbox('.gallery a', { 
         /* options */ 
         captionsData:'alt',
         captionPosition: 'bottom',
         captionDelay: 250,
     });
-}
