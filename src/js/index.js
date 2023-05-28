@@ -1,5 +1,4 @@
-import axios from "axios";
-// import fetchData from './fetchData.js'
+import onFetchData from './API.js'
 // import onCreateMarkupCard from "./markupCards.js";
 import SimpleLightbox from "simplelightbox";
 import 'simplelightbox/dist/simple-lightbox.min.css';
@@ -13,17 +12,6 @@ const refs = {
 
 refs.form.addEventListener('submit', onRequestSubmit);
 refs.loadMore.addEventListener('click', fetchCards);
-
-const API_KEY = '36616176-e2fb394e56572b2a43cdc4409';
-const API_URL = 'https://pixabay.com/api/';
-let page = 0;
-let searchQuery= ''
-
-async function onFetchData(value, page = 1) {
-  const { data } = await axios
-    .get(`${API_URL}?key=${API_KEY}&q=${value}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=40`)
-    return data;
-};
 
 function onRequestSubmit(event) {
   event.preventDefault()
@@ -50,8 +38,9 @@ function fetchCards() {
 }
 
 onHideButton();
-function getHitsMarkup() {
-  return onFetchData(searchQuery, page)
+
+async function getHitsMarkup() {
+  const resp = await onFetchData(searchQuery, page)
     .then((data) => {
       if (data.length === 0) {
         Notify.failure("Sorry, there are no images matching your search query. Please try again.")
@@ -89,6 +78,15 @@ function onEnableButton() {
   refs.loadMore.classList.remove("disabled")
 }
 
+function lightbox() {
+  new SimpleLightbox('.gallery a', { 
+          captionsData:'alt',
+          captionPosition: 'bottom',
+          captionDelay: 250,
+          animationSpeed: 250,
+  }).refresh()
+}
+  
 function onCreateMarkupCard(data) {
   refs.gallery.insertAdjacentHTML('beforeend', data.reduce((card, { webformatURL, largeImageURL, tags, likes, views, comments, downloads }) =>
     card + `<a class="gallery__link card-link"href="${largeImageURL}">
@@ -114,9 +112,5 @@ function onCreateMarkupCard(data) {
   </div>
 </div>
 </a>`, ''));
-const lightbox = new SimpleLightbox('.gallery a', { 
-        captionsData:'alt',
-        captionPosition: 'bottom',
-        captionDelay: 250,
-    });
+  lightbox()
 }
