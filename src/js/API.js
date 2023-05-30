@@ -10,4 +10,3 @@ export default async function onFetchData(searchQuery, page = 1) {
     .get(`${API_URL}?key=${API_KEY}&q=${searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&page=${page}&per_page=40`)
     return data;
 };
-

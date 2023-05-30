@@ -40,8 +40,8 @@ function fetchCards() {
 onHideButton();
 
 async function getHitsMarkup() {
-  const resp = await onFetchData(searchQuery, page)
-    .then((data) => {
+  try {
+  const data = await onFetchData(searchQuery, page);
       if (data.length === 0) {
         Notify.failure("Sorry, there are no images matching your search query. Please try again.")
         onHideButton()
@@ -54,8 +54,10 @@ async function getHitsMarkup() {
       }
       onCreateMarkupCard(data.hits)
       Notify.info(`Hooray! We found ${data.totalHits} images.`)
-    })
-    .catch(error => Notify.failure("Sorry, there are no images matching your search query. Please try again."));
+    }
+  catch (error) {
+    Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+  }
 }
 
 function onHideButton() {
