@@ -110,5 +110,10 @@ button {
   justify-content: start;
   gap: 10px;
 }
-
+.properties-svg {
+  fill: bisque;
+  margin-left: 0;
+  margin-right: 5px;
+  line-height: none;
+}
 
