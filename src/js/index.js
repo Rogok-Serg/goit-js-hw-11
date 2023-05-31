@@ -27,37 +27,44 @@ function onRequestSubmit(event) {
     refs.gallery.innerHTML = ''
     fetchCards()
     form.reset();
-    }
+  };
 }
 
-function fetchCards() {
+async function fetchCards() {
   page += 1;
   onShowButton() 
   onDisableButton()
-  getHitsMarkup().then(() => onEnableButton());
+  try {
+    const markup = await getHitsMarkup();
+  } catch (error) {
+    Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+  }
+  onEnableButton();
+    // getHitsMarkup().then(() => onEnableButton());
 }
 
 onHideButton();
 
 async function getHitsMarkup() {
   try {
-  const data = await onFetchData(searchQuery, page);
-      if (data.length === 0) {
-        Notify.failure("Sorry, there are no images matching your search query. Please try again.")
-        onHideButton()
-      } else if (data.totalHits === 0) {
-        Notify.failure("Sorry, there are no images matching your search query. Please try again.")
-        onHideButton()
-      } else if (data.hits.length < 40) {
-        onHideButton()
-        Notify.info("We're sorry, but you've reached the end of search results.")
-      }
-      onCreateMarkupCard(data.hits)
-      Notify.info(`Hooray! We found ${data.totalHits} images.`)
+    const data = await onFetchData(searchQuery, page);
+    if (data.length === 0) {
+      Notify.failure("Sorry, there are no images matching your search query. Please try again.")
+      onHideButton()
+    } else if (data.totalHits === 0) {
+      Notify.failure("Sorry, there are no images matching your search query. Please try again.")
+      onHideButton()
+    } else if (data.hits.length < 40) {
+      onHideButton()
+      Notify.info("We're sorry, but you've reached the end of search results.")
     }
+    onCreateMarkupCard(data.hits);
+    Notify.info(`Hooray! We found ${data.totalHits} images.`);
+  }
   catch (error) {
     Notify.failure("Sorry, there are no images matching your search query. Please try again.");
   }
+  
 }
 
 function onHideButton() {
@@ -116,3 +123,13 @@ function onCreateMarkupCard(data) {
 </a>`, ''));
   lightbox()
 }
+
+function handleScroll() {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+    if (scrollTop + clientHeight >= scrollHeight - 5) {
+      fetchCards();
+    }
+  }
+
+  window.addEventListener("scroll", handleScroll);
