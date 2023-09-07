@@ -16,7 +16,7 @@ refs.loadMore.addEventListener('click', fetchCards);
 function onRequestSubmit(event) {
   event.preventDefault()
   const form = event.currentTarget
-  const formValue = form.elements.value.trim();
+  const formValue = form.elements.searchQuery.value.trim();
   if (formValue === '') {
     refs.gallery.innerHTML = ''
     onHideButton()
